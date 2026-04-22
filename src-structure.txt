@@ -1,0 +1,7 @@
+src
+└── routes
+    ├── adminRoutes.ts
+    ├── authRoutes.ts
+    └── index.ts
+
+2 directories, 3 files
