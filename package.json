@@ -7,9 +7,9 @@
     "dist"
   ],
   "exports": {
-    "./routes": {
-      "types": "./dist/routes/index.d.ts",
-      "default": "./dist/routes/index.js"
+    "./session": {
+      "types": "./dist/session/index.d.ts",
+      "default": "./dist/session/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -44,6 +44,6 @@
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",
     "postgres": "^3.4.8",
-     "next": "16.1.6"
+    "next": "16.1.6"
   }
 }
