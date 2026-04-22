@@ -6,7 +6,7 @@ export type BaseSessionCookie = Pick<
 >;
 
 export const createBaseSessionCookie = (
-  secure: boolean,
+  secure = true,
   sameSite: "lax" | "strict" | "none" = "lax",
   path = "/",
 ): BaseSessionCookie => ({
