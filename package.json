@@ -6,6 +6,9 @@
   "files": [
     "dist"
   ],
+    "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "exports": {
     "./session": {
       "types": "./dist/session/index.d.ts",
