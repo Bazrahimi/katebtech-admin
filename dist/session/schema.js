@@ -1,4 +1,3 @@
-//app/_lib/session/schema.ts
 import z from "zod";
 export const sessionSchema = z.object({
     userId: z.coerce.number(),
@@ -26,7 +25,7 @@ export const forgotPasswordSchema = z.object({
 export const verifyCodeSchema = z.object({
     code: z.string().regex(/^\d{6}$/, "Enter the 6-digit verification code."),
 });
-export const ResetPasswordSchema = z
+export const resetPasswordSchema = z
     .object({
     password: PasswordField,
     confirmPassword: z.string(),
@@ -35,7 +34,7 @@ export const ResetPasswordSchema = z
     path: ["confirmPassword"],
     message: "Passwords do not match.",
 });
-export const ChangePasswordSchema = z
+export const changePasswordSchema = z
     .object({
     currentPassword: z
         .string()
