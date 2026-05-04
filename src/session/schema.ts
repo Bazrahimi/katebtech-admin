@@ -1,6 +1,6 @@
 //app/_lib/session/schema.ts
-import z from "zod";
 import type { ActionState } from "@katebtech/layout/pages";
+import z from "zod";
 export const sessionSchema = z.object({
   userId: z.coerce.number(),
   expiresAt: z
@@ -33,7 +33,7 @@ export const forgotPasswordSchema = z.object({
 export const verifyCodeSchema = z.object({
   code: z.string().regex(/^\d{6}$/, "Enter the 6-digit verification code."),
 });
-export const ResetPasswordSchema = z
+export const resetPasswordSchema = z
   .object({
     password: PasswordField,
     confirmPassword: z.string(),
@@ -42,8 +42,8 @@ export const ResetPasswordSchema = z
     path: ["confirmPassword"],
     message: "Passwords do not match.",
   });
-  
-export const ChangePasswordSchema = z
+
+export const changePasswordSchema = z
   .object({
     currentPassword: z
       .string()
@@ -62,7 +62,6 @@ export const ChangePasswordSchema = z
     message: "Your new password must be different from your current password.",
   });
 
-
 type Auth = z.infer<typeof authSchema>;
 export type AuthState = ActionState<Auth>;
 
@@ -72,5 +71,8 @@ export type ForgotPasswordState = ActionState<ForgotPassword>;
 type VerifyCode = z.infer<typeof verifyCodeSchema>;
 export type VerifyCodeState = ActionState<VerifyCode>;
 
-type ResetPassword = z.infer<typeof ResetPasswordSchema>;
+type ResetPassword = z.infer<typeof resetPasswordSchema>;
 export type ResetPasswordState = ActionState<ResetPassword>;
+
+type ChangePassword = z.infer<typeof changePasswordSchema>;
+export type ChangePasswordState = ActionState<ChangePassword>;

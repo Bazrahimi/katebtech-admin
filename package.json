@@ -3,13 +3,19 @@
   "version": "0.1.0",
   "private": false,
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-    "publishConfig": {
+  "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./session": {
       "types": "./dist/session/index.d.ts",
       "default": "./dist/session/index.js"
