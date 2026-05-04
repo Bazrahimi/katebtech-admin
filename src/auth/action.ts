@@ -1,275 +1,275 @@
-// app/members/join/lib/action.ts
-"use server";
-import { adminRoutes, authRoutes } from "@katebtech/admin";
-import { createSession } from "@/app/_lib/session/action";
-import { safeAdminNext } from "@/app/_lib/session/authRedirects";
-import { COOKIE_CONFIG as cc } from "@katebtech/admin/session";
-import { toActionErrors } from "@katebtech/layout/pages";
-import bcrypt from "bcrypt";
-import { redirect } from "next/navigation";
-import { verifyEmailCode } from "./verification";
+// // app/members/join/lib/action.ts
+// "use server";
+// import { adminRoutes, authRoutes } from "@katebtech/admin";
+// import { createSession, safeAdminNext,  } from "@katebtech/admin/session";
 
-import {
-  clearResetUid,
-  clearVerifyCookies,
-  readResetUid,
-  readVerifyCookies,
-  setResetUid,
-  setVerifyCookies,
-} from "./cookies";
-import { findUserIdByEmail, getUserForLogin, updateUserPassword } from "./data";
-import { startVerificationFlow } from "./flow";
-import { issueVerificationCode } from "./verification";
+// import { COOKIE_CONFIG as cc } from "@katebtech/admin/session";
+// import { toActionErrors } from "@katebtech/layout/pages";
+// import bcrypt from "bcrypt";
+// import { redirect } from "next/navigation";
+// import { verifyEmailCode } from "./verification";
 
-import type {
-  AuthState,
-  ForgotPasswordState,
-  ResetPasswordState,
-  VerifyCodeState,
-} from "@katebtech/admin/session";
-import {
-  authSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
-  verifyCodeSchema,
-} from "@katebtech/admin/session";
+// import {
+//   clearResetUid,
+//   clearVerifyCookies,
+//   readResetUid,
+//   readVerifyCookies,
+//   setResetUid,
+//   setVerifyCookies,
+// } from "./cookies";
+// import { findUserIdByEmail, getUserForLogin, updateUserPassword } from "./data";
+// import { startVerificationFlow } from "./flow";
+// import { issueVerificationCode } from "./verification";
 
-export const auth = async (
-  _prevState: AuthState | undefined,
-  formData: FormData,
-): Promise<AuthState | undefined> => {
-  const rawEmail = String(formData.get("email") ?? "");
-  const rawPassword = String(formData.get("password") ?? "");
-  const next = String(formData.get("next")) ?? "";
+// import type {
+//   AuthState,
+//   ForgotPasswordState,
+//   ResetPasswordState,
+//   VerifyCodeState,
+// } from "@katebtech/admin/session";
+// import {
+//   authSchema,
+//   forgotPasswordSchema,
+//   resetPasswordSchema,
+//   verifyCodeSchema,
+// } from "@katebtech/admin/session";
 
-  const parsed = authSchema.safeParse({
-    email: rawEmail,
-    password: rawPassword,
-  });
+// export const auth = async (
+//   _prevState: AuthState | undefined,
+//   formData: FormData,
+// ): Promise<AuthState | undefined> => {
+//   const rawEmail = String(formData.get("email") ?? "");
+//   const rawPassword = String(formData.get("password") ?? "");
+//   const next = String(formData.get("next")) ?? "";
 
-  if (!parsed.success) {
-    return {
-      ...toActionErrors<AuthState["errors"]>(parsed.error),
-      data: { email: rawEmail },
-    };
-  }
+//   const parsed = authSchema.safeParse({
+//     email: rawEmail,
+//     password: rawPassword,
+//   });
 
-  const { email, password } = parsed.data;
+//   if (!parsed.success) {
+//     return {
+//       ...toActionErrors<AuthState["errors"]>(parsed.error),
+//       data: { email: rawEmail },
+//     };
+//   }
 
-  try {
-    const user = await getUserForLogin(email);
+//   const { email, password } = parsed.data;
 
-    if (!user) {
-      return {
-        ok: false,
-        message: "No account found with the provided email address.",
-        data: { email },
-      };
-    }
+//   try {
+//     const user = await getUserForLogin(email);
 
-    const matched = await bcrypt.compare(password, user.passwordHash);
-    if (!matched) {
-      return {
-        ok: false,
-        message: "Incorrect password. Please try again.",
-        data: { email },
-      };
-    }
+//     if (!user) {
+//       return {
+//         ok: false,
+//         message: "No account found with the provided email address.",
+//         data: { email },
+//       };
+//     }
 
-    // ✅ Only create session if verified
-    await createSession(user.id);
-  } catch (error) {
-    console.error("Failed to login", error);
-    return {
-      ok: false,
-      message:
-        "An error occurred while processing your request. Please try again.",
-      data: { email },
-    };
-  }
+//     const matched = await bcrypt.compare(password, user.passwordHash);
+//     if (!matched) {
+//       return {
+//         ok: false,
+//         message: "Incorrect password. Please try again.",
+//         data: { email },
+//       };
+//     }
 
-  redirect(safeAdminNext(next));
-};
+//     // ✅ Only create session if verified
+//     await createSession(user.id);
+//   } catch (error) {
+//     console.error("Failed to login", error);
+//     return {
+//       ok: false,
+//       message:
+//         "An error occurred while processing your request. Please try again.",
+//       data: { email },
+//     };
+//   }
 
-/**
- * Forgot password – step 1:
- * - Validate email
- * - If user exists, set verify cookies + send code
- * - Always return same message (do not reveal if email exists)
- * - Tell client to redirect to /u/verify
- */
-export const forgotPassword = async (
-  _prevState: ForgotPasswordState | undefined,
-  formData: FormData,
-): Promise<ForgotPasswordState | undefined> => {
-  const rawEmail = String(formData.get("email") ?? "");
+//   redirect(safeAdminNext(next));
+// };
 
-  const parsed = forgotPasswordSchema.safeParse({ email: rawEmail });
+// /**
+//  * Forgot password – step 1:
+//  * - Validate email
+//  * - If user exists, set verify cookies + send code
+//  * - Always return same message (do not reveal if email exists)
+//  * - Tell client to redirect to /u/verify
+//  */
+// export const forgotPassword = async (
+//   _prevState: ForgotPasswordState | undefined,
+//   formData: FormData,
+// ): Promise<ForgotPasswordState | undefined> => {
+//   const rawEmail = String(formData.get("email") ?? "");
 
-  if (!parsed.success) {
-    return {
-      ...toActionErrors<ForgotPasswordState["errors"]>(parsed.error),
-      data: { email: rawEmail },
-    };
-  }
+//   const parsed = forgotPasswordSchema.safeParse({ email: rawEmail });
 
-  const { email } = parsed.data;
+//   if (!parsed.success) {
+//     return {
+//       ...toActionErrors<ForgotPasswordState["errors"]>(parsed.error),
+//       data: { email: rawEmail },
+//     };
+//   }
 
-  let shouldRedirect = false;
+//   const { email } = parsed.data;
 
-  try {
-    const userId = await findUserIdByEmail(email);
+//   let shouldRedirect = false;
 
-    if (userId) {
-      await startVerificationFlow({
-        userId: Number(userId),
-        email,
-        mode: "reset",
-      });
+//   try {
+//     const userId = await findUserIdByEmail(email);
 
-      shouldRedirect = true;
-    }
-  } catch (err) {
-    console.error("forgotPassword error:", err);
+//     if (userId) {
+//       await startVerificationFlow({
+//         userId: Number(userId),
+//         email,
+//         mode: "reset",
+//       });
 
-    return {
-      ok: false,
-      message: "Something went wrong. Please try again later.",
-      data: { email },
-    };
-  }
+//       shouldRedirect = true;
+//     }
+//   } catch (err) {
+//     console.error("forgotPassword error:", err);
 
-  if (shouldRedirect) {
-    redirect(authRoutes.verifyEmail());
-  }
+//     return {
+//       ok: false,
+//       message: "Something went wrong. Please try again later.",
+//       data: { email },
+//     };
+//   }
 
-  return {
-    ok: true,
-    message:
-      "If an account exists for this email, we sent a verification code.",
-    data: { email },
-  };
-};
+//   if (shouldRedirect) {
+//     redirect(authRoutes.verifyEmail());
+//   }
 
-export const resetPassword = async (
-  _prevState: ResetPasswordState | undefined,
-  formData: FormData,
-): Promise<ResetPasswordState> => {
-  const rawPassword = String(formData.get("password") ?? "");
-  const rawConfirm = String(formData.get("confirmPassword") ?? "");
+//   return {
+//     ok: true,
+//     message:
+//       "If an account exists for this email, we sent a verification code.",
+//     data: { email },
+//   };
+// };
 
-  const parsed = resetPasswordSchema.safeParse({
-    password: rawPassword,
-    confirmPassword: rawConfirm,
-  });
+// export const resetPassword = async (
+//   _prevState: ResetPasswordState | undefined,
+//   formData: FormData,
+// ): Promise<ResetPasswordState> => {
+//   const rawPassword = String(formData.get("password") ?? "");
+//   const rawConfirm = String(formData.get("confirmPassword") ?? "");
 
-  if (!parsed.success) {
-    return {
-      ...toActionErrors<ResetPasswordState["errors"]>(parsed.error),
-      data: {},
-    };
-  }
+//   const parsed = resetPasswordSchema.safeParse({
+//     password: rawPassword,
+//     confirmPassword: rawConfirm,
+//   });
 
-  const { password } = parsed.data;
+//   if (!parsed.success) {
+//     return {
+//       ...toActionErrors<ResetPasswordState["errors"]>(parsed.error),
+//       data: {},
+//     };
+//   }
 
-  // Read reset_uid from cookies
-  const userId = await readResetUid();
+//   const { password } = parsed.data;
 
-  if (!userId) {
-    return {
-      ok: false,
-      message:
-        "Your reset session has expired. Please start the password reset process again.",
-    };
-  }
+//   // Read reset_uid from cookies
+//   const userId = await readResetUid();
 
-  try {
-    const passwordHash = await bcrypt.hash(password, 12);
+//   if (!userId) {
+//     return {
+//       ok: false,
+//       message:
+//         "Your reset session has expired. Please start the password reset process again.",
+//     };
+//   }
 
-    const ok = await updateUserPassword(userId, passwordHash);
-    if (!ok) return { ok: false, message: "Account not found." };
-    // Clear reset_uid cookie
-    await clearResetUid();
-  } catch (err) {
-    console.error("resetPassword error:", err);
-    return {
-      ok: false,
-      message: "Failed to update your password. Please try again.",
-    };
-  }
-  redirect(authRoutes.login());
-};
+//   try {
+//     const passwordHash = await bcrypt.hash(password, 12);
 
-export const resendCode = async (): Promise<{
-  ok: boolean;
-  message: string;
-  expiresAtMs?: number;
-}> => {
-  const ctx = await readVerifyCookies();
+//     const ok = await updateUserPassword(userId, passwordHash);
+//     if (!ok) return { ok: false, message: "Account not found." };
+//     // Clear reset_uid cookie
+//     await clearResetUid();
+//   } catch (err) {
+//     console.error("resetPassword error:", err);
+//     return {
+//       ok: false,
+//       message: "Failed to update your password. Please try again.",
+//     };
+//   }
+//   redirect(authRoutes.login());
+// };
 
-  if (!ctx) {
-    return {
-      ok: false,
-      message:
-        "Verification session expired. Please try again or request a new code.",
-    };
-  }
+// export const resendCode = async (): Promise<{
+//   ok: boolean;
+//   message: string;
+//   expiresAtMs?: number;
+// }> => {
+//   const ctx = await readVerifyCookies();
 
-  // refresh cookie expiry window (new verify_exp + maxAge refresh)
-  await setVerifyCookies({
-    userId: ctx.userId,
-    email: ctx.email,
-    mode: ctx.mode,
-    maxAgeSeconds: cc.verificationTtlSeconds,
-  });
+//   if (!ctx) {
+//     return {
+//       ok: false,
+//       message:
+//         "Verification session expired. Please try again or request a new code.",
+//     };
+//   }
 
-  // ctx has: userId, email, mode, expiresAtMs
-  return issueVerificationCode({ userId: ctx.userId, email: ctx.email });
-};
+//   // refresh cookie expiry window (new verify_exp + maxAge refresh)
+//   await setVerifyCookies({
+//     userId: ctx.userId,
+//     email: ctx.email,
+//     mode: ctx.mode,
+//     maxAgeSeconds: cc.verificationTtlSeconds,
+//   });
 
-export const verifyCode = async (
-  _prev: VerifyCodeState | undefined,
-  formData: FormData,
-): Promise<VerifyCodeState | never> => {
-  const parsed = verifyCodeSchema.safeParse({
-    code: String(formData.get("code") ?? "").trim(),
-  });
+//   // ctx has: userId, email, mode, expiresAtMs
+//   return issueVerificationCode({ userId: ctx.userId, email: ctx.email });
+// };
 
-  if (!parsed.success) {
-    return toActionErrors<VerifyCodeState["errors"]>(
-      parsed.error,
-      "Please enter the verification code.",
-    );
-  }
+// export const verifyCode = async (
+//   _prev: VerifyCodeState | undefined,
+//   formData: FormData,
+// ): Promise<VerifyCodeState | never> => {
+//   const parsed = verifyCodeSchema.safeParse({
+//     code: String(formData.get("code") ?? "").trim(),
+//   });
 
-  const { code } = parsed.data;
+//   if (!parsed.success) {
+//     return toActionErrors<VerifyCodeState["errors"]>(
+//       parsed.error,
+//       "Please enter the verification code.",
+//     );
+//   }
 
-  const ctx = await readVerifyCookies();
-  if (!ctx) {
-    return {
-      ok: false,
-      message: "Verification session expired. Please try again.",
-    };
-  }
+//   const { code } = parsed.data;
 
-  const res = await verifyEmailCode({ userId: ctx.userId, code });
-  if (!res.ok) {
-    return { ok: false, message: res.message };
-  }
+//   const ctx = await readVerifyCookies();
+//   if (!ctx) {
+//     return {
+//       ok: false,
+//       message: "Verification session expired. Please try again.",
+//     };
+//   }
 
-  // ✅ success: clear verify cookies
-  await clearVerifyCookies();
+//   const res = await verifyEmailCode({ userId: ctx.userId, code });
+//   if (!res.ok) {
+//     return { ok: false, message: res.message };
+//   }
 
-  // ✅ reset flow
-  if (ctx.mode === "reset") {
-    await setResetUid(ctx.userId);
-    redirect(authRoutes.resetPassword());
-  }
+//   // ✅ success: clear verify cookies
+//   await clearVerifyCookies();
 
-  // ✅ login/signup flow
-  // (if your createSession needs roles/fullName, fetch them here or keep minimal)
-  await createSession(ctx.userId);
+//   // ✅ reset flow
+//   if (ctx.mode === "reset") {
+//     await setResetUid(ctx.userId);
+//     redirect(authRoutes.resetPassword());
+//   }
 
-  const next = safeAdminNext(formData.get("next"));
-  redirect(next || adminRoutes.root());
-};
+//   // ✅ login/signup flow
+//   // (if your createSession needs roles/fullName, fetch them here or keep minimal)
+//   await createSession(ctx.userId);
+
+//   const next = safeAdminNext(formData.get("next"));
+//   redirect(next || adminRoutes.root());
+// };
