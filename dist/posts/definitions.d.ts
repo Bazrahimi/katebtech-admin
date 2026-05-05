@@ -58,5 +58,7 @@ export type SlugInfo = {
     categoryId: number;
     title: string;
 };
+export type PostSeoRow = Pick<PostBase, "id" | "title" | "slug" | "heroImgPath" | "excerpt" | "categoryId">;
+export type PostSiteMapRow = Pick<PostBase, "slug" | "categoryId" | "createdAt" | "updatedAt">;
 export {};
 //# sourceMappingURL=definitions.d.ts.map
