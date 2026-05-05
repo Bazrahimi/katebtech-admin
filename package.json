@@ -24,6 +24,10 @@
       "types": "./dist/cloudinary/index.d.ts",
       "default": "./dist/cloudinary/index.js"
     },
+    "./cloudinary/delete-server": {
+      "types": "./dist/cloudinary/deleteServer.d.ts",
+      "default": "./dist/cloudinary/deleteServer.js"
+    },
     "./session": {
       "types": "./dist/session/index.d.ts",
       "default": "./dist/session/index.js"

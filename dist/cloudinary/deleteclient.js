@@ -1,3 +1,4 @@
+// cloudinary/deleteclient.ts
 import { cldApiRoutes } from "../lib/routes/cldApiRoutes";
 export async function deleteCldAssetClient({ path, resourceType = "image", }) {
     if (!path) {

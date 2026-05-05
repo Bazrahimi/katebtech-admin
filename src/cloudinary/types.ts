@@ -1,3 +1,4 @@
+// cloudinary/types.ts
 export type DeleteCldAssetInput = {
   path: string;
   resourceType?: CldResourceType;

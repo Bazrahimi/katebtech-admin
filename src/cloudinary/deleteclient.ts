@@ -1,3 +1,4 @@
+// cloudinary/deleteclient.ts
 import { cldApiRoutes } from "../lib/routes/cldApiRoutes";
 import type { DeleteCldAssetInput, DeleteCldAssetResult } from "./types";
 
