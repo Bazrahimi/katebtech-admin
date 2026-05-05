@@ -1,2 +1,2 @@
-export { deleteCldAsset } from "./deleteAsset";
+export { deleteCldAssetClient } from "./deleteclient";
 //# sourceMappingURL=index.d.ts.map

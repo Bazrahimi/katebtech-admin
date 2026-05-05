@@ -1,5 +1,5 @@
 import { cldApiRoutes } from "../routes/cldApiRoutes";
-export async function deleteCldAsset({ path, resourceType = "image", }) {
+export async function deleteCldAssetClient({ path, resourceType = "image", }) {
     if (!path) {
         return { ok: false, message: "No asset path provided." };
     }

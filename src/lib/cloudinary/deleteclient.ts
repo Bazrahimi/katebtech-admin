@@ -1,15 +1,7 @@
 import { cldApiRoutes } from "../routes/cldApiRoutes";
+import type { DeleteCldAssetInput, DeleteCldAssetResult } from "./types";
 
-export type DeleteCldAssetInput = {
-  path: string;
-  resourceType?: "image" | "video" | "raw";
-};
-
-export type DeleteCldAssetResult = {
-  ok: boolean;
-  message?: string;
-};
-export async function deleteCldAsset({
+export async function deleteCldAssetClient({
   path,
   resourceType = "image",
 }: DeleteCldAssetInput): Promise<DeleteCldAssetResult> {
