@@ -28,6 +28,10 @@
       "types": "./dist/cloudinary/deleteServer.d.ts",
       "default": "./dist/cloudinary/deleteServer.js"
     },
+    "./posts": {
+      "types": "./dist/posts/index.d.ts",
+      "default": "./dist/posts/index.js"
+    },
     "./posts/data": {
       "types": "./dist/posts/data.d.ts",
       "default": "./dist/posts/data.js"
