@@ -1,5 +1,4 @@
 // src/posts/actions.ts
-"use server";
 
 import "server-only";
 
@@ -8,8 +7,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createSqlClient } from "../db";
-import { getSession } from "../session";
 import { postAdminRoutes } from "../lib/routes/postAdminRoutes";
+import { getSession } from "../session";
 
 import { parsePostForm, postFailure, postSuccess } from "./actionHelper";
 import { createPostData } from "./data";
@@ -36,11 +35,7 @@ export const createPostActions = ({
 }: CreatePostActionsOptions) => {
   const sql = createSqlClient({ postgresUrl });
 
-  const {
-    insertPost,
-    updatePostRow,
-    getEditPostById,
-  } = createPostData({
+  const { insertPost, updatePostRow, getEditPostById } = createPostData({
     postgresUrl,
     sessionEncodedKey,
   });
