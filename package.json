@@ -20,6 +20,10 @@
       "types": "./dist/db/index.d.ts",
       "default": "./dist/db/index.js"
     },
+    "./cloudinary": {
+      "types": "./dist/cloudinary/index.d.ts",
+      "default": "./dist/cloudinary/index.js"
+    },
     "./session": {
       "types": "./dist/session/index.d.ts",
       "default": "./dist/session/index.js"

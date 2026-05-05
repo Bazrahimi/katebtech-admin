@@ -1,4 +1,4 @@
-import { cldApiRoutes } from "../routes/cldApiRoutes";
+import { cldApiRoutes } from "../lib/routes/cldApiRoutes";
 import type { DeleteCldAssetInput, DeleteCldAssetResult } from "./types";
 
 export async function deleteCldAssetClient({
