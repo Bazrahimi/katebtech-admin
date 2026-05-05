@@ -1,0 +1,1 @@
+export { deleteCldAsset } from "./deleteAsset";
