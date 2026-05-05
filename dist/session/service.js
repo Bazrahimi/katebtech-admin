@@ -1,9 +1,10 @@
 "use server";
 import { cookies } from "next/headers";
 import { AUTH_SESSION_CONFIG } from "./constants";
+import { createBaseSessionCookie } from "./cookie";
 import { signSession, verifySession } from "./jwt";
 import { sessionSchema } from "./schema";
-export const createSession = async ({ userId, extra = {}, sessionEncodedKey, baseSessionCookie, }) => {
+export const createSession = async ({ userId, extra = {}, sessionEncodedKey, baseSessionCookie = createBaseSessionCookie(), }) => {
     const expiresAt = new Date(Date.now() + AUTH_SESSION_CONFIG.ttlMs);
     const payload = sessionSchema.parse({
         userId,
@@ -17,11 +18,12 @@ export const createSession = async ({ userId, extra = {}, sessionEncodedKey, bas
         expires: payload.expiresAt,
     });
 };
-export const destroySession = async ({ baseSessionCookie, }) => {
+export const destroySession = async ({ baseSessionCookie = createBaseSessionCookie(), } = {}) => {
     const jar = await cookies();
     jar.set(AUTH_SESSION_CONFIG.cookieName, "", {
         ...baseSessionCookie,
         expires: new Date(0),
+        maxAge: 0,
     });
 };
 export const encrypt = async (payload, sessionEncodedKey) => {
