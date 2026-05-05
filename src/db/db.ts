@@ -1,4 +1,5 @@
 // db.ts
+import "server-only";
 import postgres from "postgres";
 
 type CreateSqlClientOptions = {
