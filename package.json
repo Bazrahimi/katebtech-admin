@@ -28,6 +28,18 @@
       "types": "./dist/cloudinary/deleteServer.d.ts",
       "default": "./dist/cloudinary/deleteServer.js"
     },
+    "./posts/data": {
+      "types": "./dist/posts/data.d.ts",
+      "default": "./dist/posts/data.js"
+    },
+    "./posts/actions": {
+      "types": "./dist/posts/actions.d.ts",
+      "default": "./dist/posts/actions.js"
+    },
+    "./posts/action-helper": {
+      "types": "./dist/posts/actionHelper.d.ts",
+      "default": "./dist/posts/actionHelper.js"
+    },
     "./session": {
       "types": "./dist/session/index.d.ts",
       "default": "./dist/session/index.js"
