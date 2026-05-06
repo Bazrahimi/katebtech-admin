@@ -251,6 +251,37 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
       ORDER BY created_at DESC;
     `;
     };
+    const getPostSeoById = async (postId) => {
+        const rows = await sql `
+    SELECT
+      p.id,
+      p.title,
+      p.slug,
+      p.category_id AS "categoryId",
+      p.hero_img_path AS "heroImgPath",
+      p.excerpt
+    FROM posts p
+    WHERE p.id = ${postId}
+    LIMIT 1;
+  `;
+        const post = rows[0];
+        if (!post) {
+            notFound();
+        }
+        return post;
+    };
+    const getPublishedPostsForSitemap = async () => {
+        return sql `
+    SELECT
+      p.slug,
+      p.category_id AS "categoryId",
+      p.updated_at AS "updatedAt",
+      p.created_at AS "createdAt"
+    FROM posts p
+    WHERE p.status_code = ${POST_STATUS.PUBLISHED}
+    ORDER BY COALESCE(p.updated_at, p.created_at) DESC;
+  `;
+    };
     return {
         sql,
         insertPost,
@@ -262,5 +293,7 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
         getEditPostById,
         getPostCounts,
         getPostsByStatus,
+        getPublishedPostsForSitemap,
+        getPostSeoById,
     };
 };

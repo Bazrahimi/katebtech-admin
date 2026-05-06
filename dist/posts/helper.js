@@ -1,12 +1,3 @@
-export const extractCategoryIdFromSlug = (slug) => {
-    if (!slug)
-        return null;
-    const match = slug.match(/-(\d+)$/);
-    if (!match)
-        return null;
-    const categoryId = Number(match[1]);
-    return Number.isInteger(categoryId) ? categoryId : null;
-};
 export const extractPostFromSlug = (param) => {
     if (!param)
         return null;

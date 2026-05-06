@@ -11,6 +11,8 @@ import type {
   PostCardRow,
   PostDetailRow,
   PostListRow,
+  PostSeoRow,
+  PostSiteMapRow,
   PostSuccessDBReturn,
   StatusCode,
 } from "./definitions";
@@ -345,6 +347,42 @@ export const createPostData = ({
     `;
   };
 
+  const getPostSeoById = async (postId: number): Promise<PostSeoRow> => {
+    const rows = await sql<PostSeoRow[]>`
+    SELECT
+      p.id,
+      p.title,
+      p.slug,
+      p.category_id AS "categoryId",
+      p.hero_img_path AS "heroImgPath",
+      p.excerpt
+    FROM posts p
+    WHERE p.id = ${postId}
+    LIMIT 1;
+  `;
+
+    const post = rows[0];
+
+    if (!post) {
+      notFound();
+    }
+
+    return post;
+  };
+
+  const getPublishedPostsForSitemap = async (): Promise<PostSiteMapRow[]> => {
+    return sql<PostSiteMapRow[]>`
+    SELECT
+      p.slug,
+      p.category_id AS "categoryId",
+      p.updated_at AS "updatedAt",
+      p.created_at AS "createdAt"
+    FROM posts p
+    WHERE p.status_code = ${POST_STATUS.PUBLISHED}
+    ORDER BY COALESCE(p.updated_at, p.created_at) DESC;
+  `;
+  };
+
   return {
     sql,
     insertPost,
@@ -356,5 +394,7 @@ export const createPostData = ({
     getEditPostById,
     getPostCounts,
     getPostsByStatus,
+    getPublishedPostsForSitemap,
+    getPostSeoById,
   };
 };

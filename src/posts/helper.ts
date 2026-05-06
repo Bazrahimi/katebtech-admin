@@ -1,13 +1,5 @@
 import type { SlugInfo } from "./definitions";
-export const extractCategoryIdFromSlug = (slug: string): number | null => {
-  if (!slug) return null;
-  const match = slug.match(/-(\d+)$/);
-  if (!match) return null;
 
-  const categoryId = Number(match[1]);
-
-  return Number.isInteger(categoryId) ? categoryId : null;
-};
 
 export const extractPostFromSlug = (param: string): SlugInfo | null => {
   if (!param) return null;

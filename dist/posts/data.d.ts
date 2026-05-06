@@ -1,5 +1,5 @@
 import "server-only";
-import type { EditSinglePost, PostCardRow, PostDetailRow, PostListRow, PostSuccessDBReturn, StatusCode } from "./definitions";
+import type { EditSinglePost, PostCardRow, PostDetailRow, PostListRow, PostSeoRow, PostSiteMapRow, PostSuccessDBReturn, StatusCode } from "./definitions";
 import type { PostCreateInput, PostUpdateInput } from "./schema";
 export type CreatePostDataOptions = {
     postgresUrl: string;
@@ -31,5 +31,7 @@ export declare const createPostData: ({ postgresUrl, sessionEncodedKey, }: Creat
     }) => Promise<EditSinglePost>;
     getPostCounts: () => Promise<Record<StatusCode, number>>;
     getPostsByStatus: (statusCode: StatusCode) => Promise<PostListRow[]>;
+    getPublishedPostsForSitemap: () => Promise<PostSiteMapRow[]>;
+    getPostSeoById: (postId: number) => Promise<PostSeoRow>;
 };
 //# sourceMappingURL=data.d.ts.map
