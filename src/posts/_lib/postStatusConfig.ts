@@ -1,7 +1,6 @@
-
 import { POST_STATUS } from "@katebtech/admin/posts";
 
-export const POST_STATUS_LIST_CONFIG = {
+export const postStatusConfig = {
   [POST_STATUS.DRAFT]: {
     title: "Drafts",
 

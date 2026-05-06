@@ -13,4 +13,5 @@ export type {
 } from "./definitions";
 export type { PostInput } from "./schema";
 
+export * from "./_lib";
 export { extractPostFromSlug } from "./helper";
