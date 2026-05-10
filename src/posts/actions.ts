@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 import { createSqlClient } from "../db";
 import { postAdminRoutes } from "../lib/routes/postAdminRoutes";
-import { getSession } from "@katebtech/auth";
+import { getSession } from "@katebtech/auth/session";
 
 import { parsePostForm, postFailure, postSuccess } from "./actionHelper";
 import { createPostData } from "./data";
