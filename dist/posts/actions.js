@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSqlClient } from "../db";
 import { postAdminRoutes } from "../lib/routes/postAdminRoutes";
-import { getSession } from "../session";
+import { getSession } from "@katebtech/auth";
 import { parsePostForm, postFailure, postSuccess } from "./actionHelper";
 import { createPostData } from "./data";
 import { POST_STATUS } from "./definitions";

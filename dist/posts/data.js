@@ -2,7 +2,7 @@
 import "server-only";
 import { notFound } from "next/navigation";
 import { createSqlClient } from "../db";
-import { getSession } from "../session";
+import { getSession } from "@katebtech/auth/session";
 import { POST_STATUS } from "./definitions";
 export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
     const sql = createSqlClient({ postgresUrl });

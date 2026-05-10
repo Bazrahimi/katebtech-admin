@@ -4,7 +4,8 @@ import "server-only";
 import { notFound } from "next/navigation";
 
 import { createSqlClient, type SqlFragment } from "../db";
-import { getSession } from "../session";
+
+import {getSession} from "@katebtech/auth/session"
 
 import type {
   EditSinglePost,

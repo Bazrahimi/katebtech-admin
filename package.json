@@ -67,6 +67,7 @@
     "@katebtech/core": "github:Bazrahimi/katebtech-core#main",
     "@katebtech/emails": "github:Bazrahimi/katebtech-emails#main",
     "@katebtech/layout": "github:Bazrahimi/katebtech-layout#main",
+    "@katebtech/auth": "github:Bazrahimi/katebtech-auth#main",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -79,6 +80,7 @@
   "dependencies": {
     "@katebtech/core": "0.1.0",
     "@katebtech/layout": "0.1.0",
+    "@katebtech/auth": "0.1.0",
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",
     "jose": "^6.0.0",
