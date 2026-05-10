@@ -1,5 +1,5 @@
 import type { PostInput } from "./schema";
-import type { CamelizeKeys } from "../lib";
+import type { CamelizeKeys } from "@katebtech/core";
 export declare const POST_STATUS: {
     readonly DRAFT: 1;
     readonly PUBLISHED: 2;

@@ -1,7 +1,7 @@
 //app/posts/lib/definitions.ts
 import type { PostInput } from "./schema";
 
-import type { CamelizeKeys } from "../lib";
+import type { CamelizeKeys } from "@katebtech/core";
 
 export const POST_STATUS = {
   DRAFT: 1,
