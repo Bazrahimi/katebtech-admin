@@ -3,9 +3,9 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { createSqlClient, type SqlFragment } from "../db";
+import { createSqlClient, type SqlFragment } from "@katebtech/auth/db";
 
-import {getSession} from "@katebtech/auth/session"
+import { getSession } from "@katebtech/auth/session";
 
 import type {
   EditSinglePost,
@@ -385,7 +385,6 @@ export const createPostData = ({
   };
 
   return {
-    sql,
     insertPost,
     updatePostRow,
     getPostBySlugId,

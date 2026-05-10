@@ -6,7 +6,6 @@ export type CreatePostDataOptions = {
     sessionEncodedKey: Uint8Array;
 };
 export declare const createPostData: ({ postgresUrl, sessionEncodedKey, }: CreatePostDataOptions) => {
-    sql: import("postgres").Sql<{}>;
     insertPost: (opts: {
         userId: number;
         data: PostCreateInput;

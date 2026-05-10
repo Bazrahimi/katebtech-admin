@@ -6,7 +6,7 @@ import { slugify } from "@katebtech/core";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { createSqlClient } from "../db";
+import { createSqlClient } from "@katebtech/auth/db";
 import { postAdminRoutes } from "../lib/routes/postAdminRoutes";
 import { getSession } from "@katebtech/auth/session";
 

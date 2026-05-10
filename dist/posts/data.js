@@ -1,7 +1,7 @@
 // src/posts/data.ts
 import "server-only";
 import { notFound } from "next/navigation";
-import { createSqlClient } from "../db";
+import { createSqlClient } from "@katebtech/auth/db";
 import { getSession } from "@katebtech/auth/session";
 import { POST_STATUS } from "./definitions";
 export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
@@ -283,7 +283,6 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
   `;
     };
     return {
-        sql,
         insertPost,
         updatePostRow,
         getPostBySlugId,
