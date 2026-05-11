@@ -1,3 +1,4 @@
+//app/posts/lib/definitions.ts
 export const POST_STATUS = {
     DRAFT: 1,
     PUBLISHED: 2,

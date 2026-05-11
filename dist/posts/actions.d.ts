@@ -1,5 +1,5 @@
 import "server-only";
-import type { PostActionState, PostState } from "./definitions";
+import { type PostState } from "./schema";
 type DeleteAssetResult = {
     ok: boolean;
     message?: string;
@@ -12,10 +12,10 @@ type CreatePostActionsOptions = {
 export declare const createPostActions: ({ postgresUrl, sessionEncodedKey, deleteAsset, }: CreatePostActionsOptions) => {
     createPost: (_prevState: PostState | undefined, formData: FormData) => Promise<PostState>;
     updatePost: (_prevState: PostState | undefined, formData: FormData) => Promise<PostState>;
-    featurePostAction: (_prev: PostActionState | undefined, formData: FormData) => Promise<PostActionState>;
-    publishPostAction: (_prev: PostActionState | undefined, formData: FormData) => Promise<PostActionState>;
-    archivePostAction: (_prev: PostActionState | undefined, formData: FormData) => Promise<PostActionState>;
-    deletePostAction: (_prev: PostActionState | undefined, formData: FormData) => Promise<PostActionState>;
+    featurePostAction: (_prev: PostState | undefined, formData: FormData) => Promise<PostState>;
+    publishPostAction: (_prev: PostState | undefined, formData: FormData) => Promise<PostState>;
+    archivePostAction: (_prev: PostState | undefined, formData: FormData) => Promise<PostState>;
+    deletePostAction: (_prev: PostState | undefined, formData: FormData) => Promise<PostState>;
 };
 export {};
 //# sourceMappingURL=actions.d.ts.map

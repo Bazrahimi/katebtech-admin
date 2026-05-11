@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { createSqlClient, type SqlFragment } from "@katebtech/auth/db";
 
 import { getSession } from "@katebtech/auth/session";
+import type { Post } from "./schema";
 
 import type {
   EditSinglePost,
@@ -14,13 +15,10 @@ import type {
   PostListRow,
   PostSeoRow,
   PostSiteMapRow,
-  PostSuccessDBReturn,
   StatusCode,
 } from "./definitions";
 
 import { POST_STATUS } from "./definitions";
-
-import type { PostCreateInput, PostUpdateInput } from "./schema";
 
 export type CreatePostDataOptions = {
   postgresUrl: string;
@@ -35,13 +33,13 @@ export const createPostData = ({
 
   const insertPost = async (opts: {
     userId: number;
-    data: PostCreateInput;
+    data: Post;
     slug: string;
     createdAt: Date;
-  }): Promise<PostSuccessDBReturn> => {
+  }): Promise<{ id: number }> => {
     const { userId, data, slug, createdAt } = opts;
 
-    const rows = await sql<PostSuccessDBReturn[]>`
+    const rows = await sql<{ id: number }[]>`
       INSERT INTO posts (
         user_id,
         title,
@@ -49,7 +47,6 @@ export const createPostData = ({
         content_html,
         excerpt,
         category_id,
-        status_code,
         hero_img_path,
         is_featured,
         created_at
@@ -61,16 +58,12 @@ export const createPostData = ({
         ${data.contentHtml},
         ${data.excerpt},
         ${data.categoryId},
-        ${data.statusCode},
         ${data.heroImgPath ?? null},
         ${data.isFeatured},
         ${createdAt}
       )
-      RETURNING 
-        id, 
-        slug, 
-        is_featured AS "isFeatured", 
-        status_code AS "statusCode";
+      RETURNING
+        id,
     `;
 
     return rows[0];
@@ -78,26 +71,23 @@ export const createPostData = ({
 
   const updatePostRow = async (opts: {
     id: number;
-    data: PostUpdateInput;
-  }): Promise<PostSuccessDBReturn | null> => {
+    data: Post;
+  }): Promise<{ id: number } | null> => {
     const { id, data } = opts;
 
-    const rows = await sql<PostSuccessDBReturn[]>`
+    const rows = await sql<{ id: number }[]>`
       UPDATE posts
       SET
         title          = ${data.title},
         content_html   = ${data.contentHtml},
         excerpt        = ${data.excerpt},
         category_id    = ${data.categoryId},
-        status_code    = ${data.statusCode},
         hero_img_path  = ${data.heroImgPath ?? null},
         is_featured    = ${data.isFeatured}
       WHERE id = ${id}
       RETURNING
         id,
-        slug,
-        is_featured AS "isFeatured",
-        status_code AS "statusCode";
+
     `;
 
     return rows[0] ?? null;

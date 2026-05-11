@@ -1,6 +1,6 @@
 import "server-only";
-import type { EditSinglePost, PostCardRow, PostDetailRow, PostListRow, PostSeoRow, PostSiteMapRow, PostSuccessDBReturn, StatusCode } from "./definitions";
-import type { PostCreateInput, PostUpdateInput } from "./schema";
+import type { Post } from "./schema";
+import type { EditSinglePost, PostCardRow, PostDetailRow, PostListRow, PostSeoRow, PostSiteMapRow, StatusCode } from "./definitions";
 export type CreatePostDataOptions = {
     postgresUrl: string;
     sessionEncodedKey: Uint8Array;
@@ -8,14 +8,18 @@ export type CreatePostDataOptions = {
 export declare const createPostData: ({ postgresUrl, sessionEncodedKey, }: CreatePostDataOptions) => {
     insertPost: (opts: {
         userId: number;
-        data: PostCreateInput;
+        data: Post;
         slug: string;
         createdAt: Date;
-    }) => Promise<PostSuccessDBReturn>;
+    }) => Promise<{
+        id: number;
+    }>;
     updatePostRow: (opts: {
         id: number;
-        data: PostUpdateInput;
-    }) => Promise<PostSuccessDBReturn | null>;
+        data: Post;
+    }) => Promise<{
+        id: number;
+    } | null>;
     getPostBySlugId: (postId: number) => Promise<PostDetailRow>;
     getFeaturedPostsByCategory: (categoryId: number, limit: number) => Promise<PostCardRow[]>;
     getPublishedPostsByCategory: (categoryId: number, limit: number) => Promise<PostCardRow[]>;

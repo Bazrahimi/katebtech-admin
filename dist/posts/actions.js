@@ -4,11 +4,13 @@ import { slugify } from "@katebtech/core";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSqlClient } from "@katebtech/auth/db";
-import { postAdminRoutes } from "../lib/routes/postAdminRoutes";
 import { getSession } from "@katebtech/auth/session";
-import { parsePostForm, postFailure, postSuccess } from "./actionHelper";
+import { postAdminRoutes } from "../lib/routes/postAdminRoutes";
+import { parseActionFormData } from "@katebtech/core";
 import { createPostData } from "./data";
 import { POST_STATUS } from "./definitions";
+import { postSchema } from "./schema";
+import { postFailure, postSuccess } from "./actionHelper";
 export const createPostActions = ({ postgresUrl, sessionEncodedKey, deleteAsset, }) => {
     const sql = createSqlClient({ postgresUrl });
     const { insertPost, updatePostRow, getEditPostById } = createPostData({
@@ -34,19 +36,16 @@ export const createPostActions = ({ postgresUrl, sessionEncodedKey, deleteAsset,
                 message: "You are not allowed to create posts.",
             };
         }
-        const result = parsePostForm(formData);
-        if (!result.ok) {
-            return {
-                ok: false,
-                message: "Please fix the errors above.",
-                errors: result.errors,
-                data: result.normalizedData,
-            };
+        const parsed = parseActionFormData({
+            formData,
+            schema: postSchema
+        });
+        if (!parsed.ok) {
+            return parsed.state;
         }
-        const data = result.data;
+        const data = parsed.data;
         const postData = {
             ...data,
-            categoryId: 1,
             statusCode: POST_STATUS.PUBLISHED,
             isFeatured: true,
         };
@@ -64,14 +63,7 @@ export const createPostActions = ({ postgresUrl, sessionEncodedKey, deleteAsset,
                 : "Your post has been saved as a draft.";
             return {
                 ok: true,
-                postTitle: postData.title,
                 message,
-                success: {
-                    id: created.id,
-                    statusCode: created.statusCode,
-                    isFeatured: created.isFeatured,
-                    slug: `${created.slug}-${postData.categoryId}`,
-                },
                 data,
             };
         }
@@ -101,18 +93,17 @@ export const createPostActions = ({ postgresUrl, sessionEncodedKey, deleteAsset,
             };
         }
         formData.delete("id");
-        const result = parsePostForm(formData);
-        if (!result.ok) {
-            return {
-                ok: false,
-                message: "Please fix the errors below.",
-                errors: result.errors,
-                data: result.normalizedData,
-            };
+        const parsed = parseActionFormData({
+            formData,
+            schema: postSchema
+        });
+        if (!parsed.ok) {
+            return parsed.state;
         }
+        const parsedData = parsed.data;
         const existing = await getEditPostById({ postId: id });
         const data = {
-            ...result.data,
+            ...parsedData,
             categoryId: existing.categoryId,
             statusCode: existing.statusCode,
             isFeatured: existing.isFeatured,
@@ -134,14 +125,7 @@ export const createPostActions = ({ postgresUrl, sessionEncodedKey, deleteAsset,
                 : "Your post changes have been saved.";
             return {
                 ok: true,
-                postTitle: data.title,
                 message,
-                success: {
-                    id: updated.id,
-                    slug: `${updated.slug}-${data.categoryId}`,
-                    isFeatured: updated.isFeatured,
-                    statusCode: updated.statusCode,
-                },
                 data,
             };
         }

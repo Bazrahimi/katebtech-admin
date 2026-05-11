@@ -1,4 +1,5 @@
 //src/posts/index.ts
+export { POST_FIELDS } from "./constant";
 export { POST_STATUS, POST_STATUS_LABEL } from "./definitions";
 export type {
   ActionMode,
@@ -6,12 +7,10 @@ export type {
   PostListRow,
   PostSeoRow,
   PostSiteMapRow,
-  PostState,
-  PostSuccessDBReturn,
   SlugInfo,
   StatusCode,
 } from "./definitions";
-export type { PostInput } from "./schema";
+export type { Post, PostState } from "./schema";
 
 export * from "./_lib";
 export { extractPostFromSlug } from "./helper";

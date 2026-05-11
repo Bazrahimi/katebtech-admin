@@ -7,15 +7,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createSqlClient } from "@katebtech/auth/db";
-import { postAdminRoutes } from "../lib/routes/postAdminRoutes";
 import { getSession } from "@katebtech/auth/session";
+import { postAdminRoutes } from "../lib/routes/postAdminRoutes";
 
-import { parsePostForm, postFailure, postSuccess } from "./actionHelper";
+import { parseActionFormData } from "@katebtech/core";
 import { createPostData } from "./data";
-
-import type { PostActionState, PostState } from "./definitions";
 import { POST_STATUS } from "./definitions";
-import type { PostCreateInput, PostUpdateInput } from "./schema";
+import { postSchema, type Post, type PostState } from "./schema";
+import { postFailure, postSuccess } from "./actionHelper";
 
 type DeleteAssetResult = {
   ok: boolean;
@@ -68,23 +67,21 @@ export const createPostActions = ({
         message: "You are not allowed to create posts.",
       };
     }
-
-    const result = parsePostForm(formData);
-
-    if (!result.ok) {
-      return {
-        ok: false,
-        message: "Please fix the errors above.",
-        errors: result.errors,
-        data: result.normalizedData,
-      };
+    const parsed = parseActionFormData<typeof postSchema, PostState['errors']>({
+      formData,
+      schema: postSchema
+    })
+    if (!parsed.ok) {
+      return parsed.state
     }
+    
 
-    const data = result.data;
 
-    const postData: PostCreateInput = {
+
+    const data = parsed.data;
+
+    const postData: Post = {
       ...data,
-      categoryId: 1,
       statusCode: POST_STATUS.PUBLISHED,
       isFeatured: true,
     };
@@ -107,14 +104,7 @@ export const createPostActions = ({
 
       return {
         ok: true,
-        postTitle: postData.title,
         message,
-        success: {
-          id: created.id,
-          statusCode: created.statusCode,
-          isFeatured: created.isFeatured,
-          slug: `${created.slug}-${postData.categoryId}`,
-        },
         data,
       };
     } catch (err) {
@@ -153,21 +143,20 @@ export const createPostActions = ({
 
     formData.delete("id");
 
-    const result = parsePostForm(formData);
+    const parsed = parseActionFormData<typeof postSchema, PostState["errors"]>({
+      formData, 
+      schema: postSchema
+    })
 
-    if (!result.ok) {
-      return {
-        ok: false,
-        message: "Please fix the errors below.",
-        errors: result.errors,
-        data: result.normalizedData,
-      };
+    if (!parsed.ok) {
+      return parsed.state
     }
+    const parsedData = parsed.data
 
     const existing = await getEditPostById({ postId: id });
 
-    const data: PostUpdateInput = {
-      ...result.data,
+    const data: Post = {
+      ...parsedData,
       categoryId: existing.categoryId,
       statusCode: existing.statusCode,
       isFeatured: existing.isFeatured,
@@ -194,14 +183,8 @@ export const createPostActions = ({
 
       return {
         ok: true,
-        postTitle: data.title,
         message,
-        success: {
-          id: updated.id,
-          slug: `${updated.slug}-${data.categoryId}`,
-          isFeatured: updated.isFeatured,
-          statusCode: updated.statusCode,
-        },
+
         data,
       };
     } catch (err) {
@@ -216,9 +199,9 @@ export const createPostActions = ({
   };
 
   const featurePostAction = async (
-    _prev: PostActionState | undefined,
+    _prev: PostState | undefined,
     formData: FormData,
-  ): Promise<PostActionState> => {
+  ): Promise<PostState> => {
     const session = await getSession(sessionEncodedKey);
 
     if (!session) {
@@ -260,9 +243,9 @@ export const createPostActions = ({
   };
 
   const publishPostAction = async (
-    _prev: PostActionState | undefined,
+    _prev: PostState | undefined,
     formData: FormData,
-  ): Promise<PostActionState> => {
+  ): Promise<PostState> => {
     const session = await getSession(sessionEncodedKey);
 
     if (!session) {
@@ -300,9 +283,9 @@ export const createPostActions = ({
   };
 
   const archivePostAction = async (
-    _prev: PostActionState | undefined,
+    _prev: PostState | undefined,
     formData: FormData,
-  ): Promise<PostActionState> => {
+  ): Promise<PostState> => {
     const session = await getSession(sessionEncodedKey);
 
     if (!session) {
@@ -340,9 +323,9 @@ export const createPostActions = ({
   };
 
   const deletePostAction = async (
-    _prev: PostActionState | undefined,
+    _prev: PostState | undefined,
     formData: FormData,
-  ): Promise<PostActionState> => {
+  ): Promise<PostState> => {
     const session = await getSession(sessionEncodedKey);
 
     if (!session) {

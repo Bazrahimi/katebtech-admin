@@ -1,4 +1,3 @@
-import type { PostInput } from "./schema";
 import type { CamelizeKeys } from "@katebtech/core";
 export declare const POST_STATUS: {
     readonly DRAFT: 1;
@@ -30,29 +29,7 @@ export type PostCardRow = Pick<PostBase, "id" | "title" | "slug" | "heroImgPath"
 };
 export type EditSinglePost = Pick<PostBase, "id" | "title" | "contentHtml" | "excerpt" | "categoryId" | "statusCode" | "heroImgPath" | "isFeatured" | "createdAt">;
 export type PostListRow = Pick<PostBase, "id" | "title" | "slug" | "isFeatured" | "statusCode" | "createdAt" | "categoryId">;
-export type PostActionState = {
-    ok: boolean;
-    message: string;
-    errors?: Record<string, string[]>;
-};
-export type PostSuccessDBReturn = Pick<PostBase, "id" | "slug" | "isFeatured" | "statusCode">;
 export type ActionMode = "create" | "edit";
-export type PostState = {
-    ok?: boolean;
-    postTitle?: string;
-    message?: string;
-    errors?: Partial<Record<keyof PostInput, string[]>>;
-    data?: Partial<PostInput>;
-    success?: PostSuccessDBReturn;
-};
-export type ParseResult = {
-    ok: true;
-    data: PostInput;
-} | {
-    ok: false;
-    errors: PostState["errors"];
-    normalizedData: Partial<PostInput>;
-};
 export type SlugInfo = {
     postId: number;
     categoryId: number;
