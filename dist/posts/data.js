@@ -32,7 +32,7 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
         ${createdAt}
       )
       RETURNING
-        id,
+        id
     `;
         return rows[0];
     };
@@ -49,7 +49,7 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
         is_featured    = ${data.isFeatured}
       WHERE id = ${id}
       RETURNING
-        id,
+        id
 
     `;
         return rows[0] ?? null;

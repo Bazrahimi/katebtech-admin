@@ -63,7 +63,7 @@ export const createPostData = ({
         ${createdAt}
       )
       RETURNING
-        id,
+        id
     `;
 
     return rows[0];
@@ -86,7 +86,7 @@ export const createPostData = ({
         is_featured    = ${data.isFeatured}
       WHERE id = ${id}
       RETURNING
-        id,
+        id
 
     `;
 
