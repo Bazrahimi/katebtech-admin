@@ -46,8 +46,6 @@ export const createPostActions = ({ postgresUrl, sessionEncodedKey, deleteAsset,
         const data = parsed.data;
         const postData = {
             ...data,
-            statusCode: POST_STATUS.PUBLISHED,
-            isFeatured: true,
         };
         const slug = slugify(postData.title);
         const createdAt = new Date();
@@ -103,10 +101,7 @@ export const createPostActions = ({ postgresUrl, sessionEncodedKey, deleteAsset,
         const parsedData = parsed.data;
         const existing = await getEditPostById({ postId: id });
         const data = {
-            ...parsedData,
-            categoryId: existing.categoryId,
-            statusCode: existing.statusCode,
-            isFeatured: existing.isFeatured,
+            ...parsedData
         };
         try {
             const updated = await updatePostRow({

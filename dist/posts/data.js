@@ -16,6 +16,7 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
         content_html,
         excerpt,
         category_id,
+        status_code,
         hero_img_path,
         is_featured,
         created_at
@@ -27,6 +28,7 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
         ${data.contentHtml},
         ${data.excerpt},
         ${data.categoryId},
+        ${data.statusCode},
         ${data.heroImgPath ?? null},
         ${data.isFeatured},
         ${createdAt}
@@ -34,7 +36,7 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
       RETURNING
         id
     `;
-        return rows[0];
+        return rows[0] ?? null;
     };
     const updatePostRow = async (opts) => {
         const { id, data } = opts;
@@ -45,6 +47,7 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
         content_html   = ${data.contentHtml},
         excerpt        = ${data.excerpt},
         category_id    = ${data.categoryId},
+        status_code    = ${data.statusCode},
         hero_img_path  = ${data.heroImgPath ?? null},
         is_featured    = ${data.isFeatured}
       WHERE id = ${id}

@@ -82,8 +82,6 @@ export const createPostActions = ({
 
     const postData: Post = {
       ...data,
-      statusCode: POST_STATUS.PUBLISHED,
-      isFeatured: true,
     };
 
     const slug = slugify(postData.title);
@@ -156,10 +154,7 @@ export const createPostActions = ({
     const existing = await getEditPostById({ postId: id });
 
     const data: Post = {
-      ...parsedData,
-      categoryId: existing.categoryId,
-      statusCode: existing.statusCode,
-      isFeatured: existing.isFeatured,
+      ...parsedData
     };
 
     try {
