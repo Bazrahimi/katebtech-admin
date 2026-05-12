@@ -2,11 +2,42 @@ import type { ActionState, BooleanKeys } from "@katebtech/core";
 import { toBoolean } from "@katebtech/core";
 import z from "zod";
 import { POST_FIELDS as pf } from "./constant";
+import { POST_STATUS } from "./definitions";
 
 const checkboxBoolean = z
   .preprocess((val) => toBoolean(val), z.boolean())
   .optional()
   .default(false);
+
+  const StatusCodeField = z.preprocess(
+  (value) => {
+    if (value === null || value === undefined || value === "") {
+      return undefined;
+    }
+
+    const numberValue = Number(value);
+
+    if (Number.isNaN(numberValue)) {
+      return undefined;
+    }
+
+    return numberValue;
+  },
+  z
+    .number({
+      error: "Status should be selected",
+    })
+    .int("Status should be selected")
+    .refine(
+      (value) =>
+        value === POST_STATUS.DRAFT ||
+        value === POST_STATUS.PUBLISHED ||
+        value === POST_STATUS.ARCHIVED,
+      {
+        message: "Status should be selected",
+      },
+    ),
+);
 
 export const postSchema = z.object({
   [pf.title]: z
@@ -17,7 +48,7 @@ export const postSchema = z.object({
   [pf.categoryId]: z.coerce.number().min(1, "category should selected"),
 
   [pf.isFeatured]: checkboxBoolean,
-  [pf.statusCode]: z.coerce.number().min(1, "statusCode should be selected"),
+  [pf.statusCode]: StatusCodeField,
 
   [pf.contentHtml]: z
     .string()

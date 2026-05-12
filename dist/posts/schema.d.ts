@@ -4,7 +4,7 @@ export declare const postSchema: z.ZodObject<{
     title: z.ZodString;
     categoryId: z.ZodCoercedNumber<unknown>;
     isFeatured: z.ZodDefault<z.ZodOptional<z.ZodPreprocess<z.ZodBoolean>>>;
-    statusCode: z.ZodCoercedNumber<unknown>;
+    statusCode: z.ZodPreprocess<z.ZodNumber & z.ZodType<1 | 2 | 3, number, z.core.$ZodTypeInternals<1 | 2 | 3, number>>>;
     contentHtml: z.ZodString;
     excerpt: z.ZodString;
     heroImgPath: z.ZodNullable<z.ZodOptional<z.ZodString>>;
