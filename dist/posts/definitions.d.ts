@@ -10,7 +10,6 @@ export declare const isStatusCode: (v: unknown) => v is StatusCode;
 export declare const POST_STATUS_LABEL: Record<StatusCode, string>;
 type PostDbRow = {
     id: number;
-    user_id: number;
     title: string;
     slug: string;
     content_html: string;

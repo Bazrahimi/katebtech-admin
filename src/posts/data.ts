@@ -124,35 +124,29 @@ export const createPostData = ({
     `;
   };
 
-  const getPostBySlugId = async (postId: number): Promise<PostDetailRow> => {
+  const getPostBySlugId = async (
+    postId: number,
+  ): Promise<PostDetailRow | null> => {
     const rows = await sql<PostDetailRow[]>`
-      SELECT
-        p.id,
-        p.user_id AS "userId",
-        p.title,
-        p.slug,
-        p.content_html AS "contentHtml",
-        p.status_code AS "statusCode",
-        p.category_id AS "categoryId",
-        p.hero_img_path AS "heroImgPath",
-        p.is_featured AS "isFeatured",
-        to_char(
-          p.created_at AT TIME ZONE 'Australia/Melbourne',
-          'DD MON YYYY'
-        ) AS "createdAt"
+    SELECT
+      p.id,
+      p.title,
+      p.slug,
+      p.content_html AS "contentHtml",
+      p.status_code AS "statusCode",
+      p.category_id AS "categoryId",
+      p.hero_img_path AS "heroImgPath",
+      p.is_featured AS "isFeatured",
+      to_char(
+        p.created_at AT TIME ZONE 'Australia/Melbourne',
+        'DD MON YYYY'
+      ) AS "createdAt"
+    FROM posts p
+    WHERE p.id = ${postId}
+    LIMIT 1;
+  `;
 
-      FROM posts p
-      WHERE p.id = ${postId}
-      LIMIT 1;
-    `;
-
-    const post = rows[0];
-
-    if (!post) {
-      notFound();
-    }
-
-    return post;
+    return rows[0] ?? null;
   };
 
   const getFeaturedPostsByCategory = async (

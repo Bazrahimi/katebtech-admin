@@ -83,30 +83,24 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
     };
     const getPostBySlugId = async (postId) => {
         const rows = await sql `
-      SELECT
-        p.id,
-        p.user_id AS "userId",
-        p.title,
-        p.slug,
-        p.content_html AS "contentHtml",
-        p.status_code AS "statusCode",
-        p.category_id AS "categoryId",
-        p.hero_img_path AS "heroImgPath",
-        p.is_featured AS "isFeatured",
-        to_char(
-          p.created_at AT TIME ZONE 'Australia/Melbourne',
-          'DD MON YYYY'
-        ) AS "createdAt"
-
-      FROM posts p
-      WHERE p.id = ${postId}
-      LIMIT 1;
-    `;
-        const post = rows[0];
-        if (!post) {
-            notFound();
-        }
-        return post;
+    SELECT
+      p.id,
+      p.title,
+      p.slug,
+      p.content_html AS "contentHtml",
+      p.status_code AS "statusCode",
+      p.category_id AS "categoryId",
+      p.hero_img_path AS "heroImgPath",
+      p.is_featured AS "isFeatured",
+      to_char(
+        p.created_at AT TIME ZONE 'Australia/Melbourne',
+        'DD MON YYYY'
+      ) AS "createdAt"
+    FROM posts p
+    WHERE p.id = ${postId}
+    LIMIT 1;
+  `;
+        return rows[0] ?? null;
     };
     const getFeaturedPostsByCategory = async (categoryId, limit) => {
         return getPostsWithWhere(sql `

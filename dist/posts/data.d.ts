@@ -20,7 +20,7 @@ export declare const createPostData: ({ postgresUrl, sessionEncodedKey, }: Creat
     }) => Promise<{
         id: number;
     } | null>;
-    getPostBySlugId: (postId: number) => Promise<PostDetailRow>;
+    getPostBySlugId: (postId: number) => Promise<PostDetailRow | null>;
     getFeaturedPostsByCategory: (categoryId: number, limit: number) => Promise<PostCardRow[]>;
     getPublishedPostsByCategory: (categoryId: number, limit: number) => Promise<PostCardRow[]>;
     getRelatedPostsByTitle: ({ postId, categoryId, title, limit, }: {
