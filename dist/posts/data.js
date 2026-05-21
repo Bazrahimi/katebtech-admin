@@ -88,6 +88,7 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
       p.title,
       p.slug,
       p.content_html AS "contentHtml",
+      p.excerpt,
       p.status_code AS "statusCode",
       p.category_id AS "categoryId",
       p.hero_img_path AS "heroImgPath",
@@ -95,7 +96,11 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
       to_char(
         p.created_at AT TIME ZONE 'Australia/Melbourne',
         'DD MON YYYY'
-      ) AS "createdAt"
+      ) AS "createdAt",
+      to_char(
+        p.updated_at AT TIME ZONE 'Australia/Melbourne',
+        'DD MON YYYY'
+      ) AS "updatedAt"
     FROM posts p
     WHERE p.id = ${postId}
     LIMIT 1;
