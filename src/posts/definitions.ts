@@ -81,7 +81,6 @@ export type ActionMode = "create" | "edit";
 
 export type SlugInfo = {
   postId: number;
-  categoryId: number;
   title: string;
 };
 

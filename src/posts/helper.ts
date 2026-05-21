@@ -1,24 +1,17 @@
 import type { SlugInfo } from "./definitions";
 
-
 export const extractPostFromSlug = (param: string): SlugInfo | null => {
   if (!param) return null;
 
-  // match: "some-post-title-123-5"
-  const match = param.match(/^(.*)-(\d+)-(\d+)$/);
+  // match: "some-post-title-123"
+  const match = param.match(/^(.*)-(\d+)$/);
   if (!match) return null;
 
-  const [, rawTitle, postIdStr, categoryIdStr] = match;
+  const [, rawTitle, postIdStr] = match;
 
   const postId = Number(postIdStr);
-  const categoryId = Number(categoryIdStr);
 
-  if (
-    !Number.isInteger(postId) ||
-    postId <= 0 ||
-    !Number.isInteger(categoryId) ||
-    categoryId <= 0
-  ) {
+  if (!Number.isInteger(postId) || postId <= 0) {
     return null;
   }
 
@@ -26,7 +19,6 @@ export const extractPostFromSlug = (param: string): SlugInfo | null => {
 
   return {
     postId,
-    categoryId,
     title,
   };
 };

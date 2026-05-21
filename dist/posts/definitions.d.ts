@@ -32,7 +32,6 @@ export type PostListRow = Pick<PostBase, "id" | "title" | "slug" | "isFeatured" 
 export type ActionMode = "create" | "edit";
 export type SlugInfo = {
     postId: number;
-    categoryId: number;
     title: string;
 };
 export type PostSeoRow = Pick<PostBase, "id" | "title" | "slug" | "heroImgPath" | "excerpt" | "categoryId">;
