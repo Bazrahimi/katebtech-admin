@@ -138,39 +138,59 @@ export const createPostData = ({ postgresUrl, sessionEncodedKey, }) => {
 
     FROM posts p
   `;
+    const getLatestPostsByCategory = async ({ postId, categoryId, limit = 6, }) => {
+        return sql `
+    ${postCardSelect}
+    WHERE
+      p.status_code = ${POST_STATUS.PUBLISHED}
+      AND p.id <> ${postId}
+      AND p.category_id = ${categoryId}
+    ORDER BY p.created_at DESC
+    LIMIT ${limit};
+  `;
+    };
     const getRelatedPostsByTitle = async ({ postId, categoryId, title, limit = 6, }) => {
+        const cleanedTitle = title.trim();
+        if (!cleanedTitle) {
+            return getLatestPostsByCategory({
+                postId,
+                categoryId,
+                limit,
+            });
+        }
         const rows = await sql `
-      WITH q AS (
-        SELECT websearch_to_tsquery('simple', ${title}) AS query
-      )
-      ${postCardSelect}
-      CROSS JOIN q
-      WHERE
-        p.status_code = ${POST_STATUS.PUBLISHED}
-        AND p.id <> ${postId}
-        AND p.category_id = ${categoryId}
-        AND q.query <> ''::tsquery
-        AND to_tsvector('simple', COALESCE(p.title, '')) @@ q.query
-      ORDER BY
-        ts_rank_cd(
-          to_tsvector('simple', COALESCE(p.title, '')),
-          q.query
-        ) DESC,
-        p.created_at DESC
-      LIMIT ${limit};
-    `;
+    WITH q AS (
+      SELECT websearch_to_tsquery('simple', ${cleanedTitle}) AS query
+    )
+    ${postCardSelect}
+    CROSS JOIN q
+    WHERE
+      p.status_code = ${POST_STATUS.PUBLISHED}
+      AND p.id <> ${postId}
+      AND p.category_id = ${categoryId}
+      AND to_tsvector(
+        'simple',
+        COALESCE(p.title, '') || ' ' || COALESCE(p.excerpt, '')
+      ) @@ q.query
+    ORDER BY
+      ts_rank_cd(
+        to_tsvector(
+          'simple',
+          COALESCE(p.title, '') || ' ' || COALESCE(p.excerpt, '')
+        ),
+        q.query
+      ) DESC,
+      p.created_at DESC
+    LIMIT ${limit};
+  `;
         if (rows.length > 0) {
             return rows;
         }
-        return sql `
-      ${postCardSelect}
-      WHERE
-        p.status_code = ${POST_STATUS.PUBLISHED}
-        AND p.id <> ${postId}
-        AND p.category_id = ${categoryId}
-      ORDER BY p.created_at DESC
-      LIMIT ${limit};
-    `;
+        return getLatestPostsByCategory({
+            postId,
+            categoryId,
+            limit,
+        });
     };
     const getEditPostById = async ({ postId, }) => {
         const rows = await sql `
